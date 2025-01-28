@@ -127,10 +127,10 @@ google-auth==2.3.0
 ### 2.4 Build and Push Container
 ```bash
 # Build the container
-docker build -t gcr.io/${PROJECT_ID}/frontend:v1 .
+docker build -t gcr.io/${GOOGLE_CLOUD_PROJECT}/frontend:v1 .
 
 # Push to Container Registry
-docker push gcr.io/${PROJECT_ID}/frontend:v1
+docker push gcr.io/${GOOGLE_CLOUD_PROJECT}/frontend:v1
 ```
 
 ### 2.5 Kubernetes Deployment
@@ -263,8 +263,8 @@ gcloud iam service-accounts create functions-sa --display-name "Cloud Functions 
 gcloud iam service-accounts create frontend-sa --display-name "Frontend Service Account"
 
 # Grant necessary permissions
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member "serviceAccount:frontend-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
+    --member "serviceAccount:frontend-sa@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
     --role "roles/cloudfunctions.invoker"
 ```
 
