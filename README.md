@@ -64,7 +64,6 @@ gcloud compute instances create vm-1 \
     --zone=europe-west1-b \
     --machine-type=e2-medium \
     --subnet=subnet-1 \
-    --network-interface=network-tier=PREMIUM \
     --image-family=debian-11 \
     --image-project=debian-cloud
 ```
@@ -75,7 +74,6 @@ gcloud compute instances create vm-2 \
     --zone=europe-west1-b \
     --machine-type=e2-medium \
     --subnet=subnet-1 \
-    --network-interface=network-tier=PREMIUM \
     --image-family=debian-11 \
     --image-project=debian-cloud
 ```
@@ -86,7 +84,6 @@ gcloud compute instances create vm-3 \
     --zone=europe-west1-b \
     --machine-type=e2-medium \
     --subnet=subnet-2 \
-    --network-interface=network-tier=PREMIUM \
     --image-family=debian-11 \
     --image-project=debian-cloud
 ```
