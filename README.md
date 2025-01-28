@@ -122,8 +122,7 @@ gcloud iam service-accounts create vm3-sa \
 gcloud run deploy hello-service \
     --image=gcr.io/google-samples/hello-app:1.0 \
     --platform=managed \
-    --region=europe-west1 \
-    --allow-unauthenticated=false
+    --region=europe-west1
 ```
 
 3. **Configure Service Account Access**
