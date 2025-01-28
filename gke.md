@@ -29,7 +29,7 @@ gcloud container clusters create image-processing-cluster \
     --zone europe-west1-b \
     --num-nodes 2 \
     --machine-type e2-medium \
-    --workload-pool=${PROJECT_ID}.svc.id.goog
+    --workload-pool=${GOOGLE_CLOUD_PROJECT}.svc.id.goog
 
 # Get credentials
 gcloud container clusters get-credentials image-processing-cluster --zone europe-west1-b
