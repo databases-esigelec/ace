@@ -21,9 +21,9 @@ ARG USERNAME=vscode
 COPY --from=terraform /bin/terraform /usr/local/bin/
 COPY --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/
 COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
-# Install Google Cloud SDK the proper way
+# # Install Google Cloud SDK the proper way
 RUN curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=~/gcloud --disable-prompts
-ENV PATH $PATH:~/gcloud/google-cloud-sdk/bin
+# ENV PATH $PATH:~/gcloud/google-cloud-sdk/bin
 # Install Python packages
 COPY requirements.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
@@ -39,6 +39,5 @@ RUN echo 'source <(kubectl completion bash)' >> ~/.bashrc \
 # Verify installations (with proper error handling)
 RUN set -e; \
     terraform version; \
-    kubectl version --client; \
-    gcloud version; 
+    kubectl version --client; 
     

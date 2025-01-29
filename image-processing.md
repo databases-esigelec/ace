@@ -29,12 +29,19 @@ A complete Google Cloud Platform setup for an image processing service that remo
 
 ## Prerequisites
 
-1. Install the following tools:
+1. All those tools are needed and installed(all but gcloud):
    - Docker
    - Terraform >= 1.0
    - `gcloud` CLI
    - `kubectl`
 
+  :
+   **Install gcloud**:
+   ```
+   curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=~/gcloud --disable-prompts
+   echo "PATH=$PATH:~/gcloud/google-cloud-sdk/bin" >> ~/.bashrc
+   ```
+   > Open a new terminal and you'll be ready to start.
 2. Set up Google Cloud authentication:
 ```bash
 # Use existing credentials
