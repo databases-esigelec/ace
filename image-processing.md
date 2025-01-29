@@ -1,6 +1,41 @@
 # Background Removal Service Lab
 
 A complete Google Cloud Platform setup for an image processing service that removes backgrounds from images using `rembg` library, demonstrating the integration of GKE, Cloud Run, Cloud Functions, Pub/Sub, and Cloud Spanner.
+```mermaid
+flowchart TD
+    User[fa:fa-user User] -->|Uploads Image| Frontend
+    
+    subgraph GKE[Google Kubernetes Engine]
+        Frontend[Frontend Service\n Python/Flask]
+    end
+    
+    subgraph CloudRun[Cloud Run]
+        BGRemove[Background Removal Service\n rembg/Python]
+    end
+    
+    subgraph CloudFunction[Cloud Function]
+        MetadataProcessor[Metadata Processor\n Python]
+    end
+    
+    Frontend -->|HTTP POST| BGRemove
+    BGRemove -->|Store Image| GCS[(Cloud Storage)]
+    BGRemove -->|Publish Message| PubSub{Pub/Sub Topic}
+    PubSub -->|Trigger| MetadataProcessor
+    MetadataProcessor -->|Store Metadata| Spanner[(Cloud Spanner)]
+    BGRemove -->|Return URL| Frontend
+    Frontend -->|Display Result| User
+
+    classDef gcp fill:#4285f4,stroke:#4285f4,stroke-width:2px,color:white;
+    classDef user fill:#34a853,stroke:#34a853,stroke-width:2px,color:white;
+    classDef storage fill:#fbbc05,stroke:#fbbc05,stroke-width:2px,color:white;
+    classDef pubsub fill:#ea4335,stroke:#ea4335,stroke-width:2px,color:white;
+    
+    class GKE,CloudRun,CloudFunction gcp;
+    class User user;
+    class GCS,Spanner storage;
+    class PubSub pubsub;
+
+```
 
 ## Project Structure
 ```
