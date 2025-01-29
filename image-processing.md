@@ -123,6 +123,7 @@ docker push gcr.io/${PROJECT_ID}/bg-remove:latest
 
 #auth to the registry gcr
 gcloud auth configure-docker gcr.io
+sudo docker login -u _json_key_ --password-stdin < infra/credentials.json 
 
 # Build and push frontend
 docker build -t gcr.io/${PROJECT_ID}/frontend:latest frontend/
