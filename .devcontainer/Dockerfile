@@ -1,47 +1,44 @@
 # .devcontainer/Dockerfile
-FROM mcr.microsoft.com/vscode/devcontainers/python:3.9
+FROM mcr.microsoft.com/vscode/devcontainers/python:3.9 as base
 
-ARG TERRAFORM_VERSION
-ARG KUBECTL_VERSION
-ARG GOOGLE_CLOUD_SDK_VERSION
+# Use official HashiCorp Terraform image
+FROM hashicorp/terraform:latest as terraform
+
+# Use official Google Cloud SDK image
+FROM google/cloud-sdk:latest as gcloud
+
+# Use official Bitnami kubectl image
+FROM bitnami/kubectl:latest as kubectl
+
+# Use official Docker image
+FROM docker:latest as docker
+
+# Final stage
+FROM base as final
 ARG USERNAME=vscode
 
-# Install required packages
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    gnupg \
-    lsb-release \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Terraform
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
-    && apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && apt-get update \
-    && apt-get install -y terraform=${TERRAFORM_VERSION} \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install kubectl
-RUN curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
-    && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
-    && rm kubectl
-
-# Install Google Cloud SDK
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
-    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - \
-    && apt-get update -y \
-    && apt-get install -y google-cloud-sdk=${GOOGLE_CLOUD_SDK_VERSION}-0 \
-    && rm -rf /var/lib/apt/lists/*
-
+# Copy binaries from official images
+COPY --from=terraform /bin/terraform /usr/local/bin/
+COPY --from=kubectl /opt/bitnami/kubectl/bin/kubectl /usr/local/bin/
+COPY --from=docker /usr/local/bin/docker /usr/local/bin/docker
+# Install Google Cloud SDK the proper way
+RUN curl -sSL https://sdk.cloud.google.com > /tmp/gcl && bash /tmp/gcl --install-dir=~/gcloud --disable-prompts
+ENV PATH $PATH:~/gcloud/google-cloud-sdk/bin
 # Install Python packages
 COPY requirements.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Setup non-root user
-USER $USERNAME
+# Setup non-root user and ensure proper permissions
+USER ${USERNAME}
 
-# Add autocompletion for various tools
+# Add autocompletion and aliases
 RUN echo 'source <(kubectl completion bash)' >> ~/.bashrc \
-    && echo 'source /usr/lib/google-cloud-sdk/completion.bash.inc' >> ~/.bashrc \
+    && echo 'source /usr/share/google-cloud-sdk/completion.bash.inc' >> ~/.bashrc \
     && echo 'complete -C /usr/bin/terraform terraform' >> ~/.bashrc
+
+# Verify installations (with proper error handling)
+RUN set -e; \
+    terraform version; \
+    kubectl version --client; \
+    gcloud version; 
+    

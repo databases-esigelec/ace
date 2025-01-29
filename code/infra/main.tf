@@ -11,6 +11,7 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+  credentials = file(var.credentials)
 }
 
 # Enable required APIs
@@ -24,7 +25,7 @@ resource "google_project_service" "required_apis" {
     "cloudbuild.googleapis.com",    # Cloud Build
     "artifactregistry.googleapis.com"
   ])
-  
+
   service = each.key
   disable_dependent_services = true
 }
@@ -61,16 +62,16 @@ resource "google_spanner_database" "image_db" {
 resource "google_container_cluster" "primary" {
   name     = "image-processing-cluster"
   location = var.zone
-  
+
   initial_node_count = 1
-  
+
   node_config {
     machine_type = "e2-medium"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
-  
+
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
@@ -116,10 +117,13 @@ resource "google_cloud_run_service" "image_processor" {
   name     = "image-processor"
   location = var.region
 
+
   template {
     spec {
       containers {
+
         image = "gcr.io/${var.project_id}/image-processor:latest"
+
         resources {
           limits = {
             memory = "1Gi"
@@ -140,15 +144,23 @@ resource "google_cloud_run_service" "image_processor" {
 }
 
 # Cloud Function
+data "archive_file" "function_source" {
+  type        = "zip"
+  output_path = "${path.module}/function-source.zip"
+  source_dir  = "${path.module}/metadata_processor"
+}
+
+
 resource "google_storage_bucket" "function_source" {
   name     = "${var.project_id}-function-source"
   location = var.region
 }
 
+# Upload the source code to GCS
 resource "google_storage_bucket_object" "function_source" {
-  name   = "function-source.zip"
+  name   = "function-source-${data.archive_file.function_source.output_md5}.zip"
   bucket = google_storage_bucket.function_source.name
-  source = "./function-source.zip"  # Make sure to create this ZIP file
+  source = data.archive_file.function_source.output_path
 }
 
 resource "google_cloudfunctions2_function" "metadata_processor" {
