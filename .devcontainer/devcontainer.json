@@ -1,0 +1,39 @@
+# .devcontainer/devcontainer.json
+{
+    "name": "GCP Infrastructure Development",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "args": {
+            "TERRAFORM_VERSION": "1.5.7",
+            "KUBECTL_VERSION": "1.27.3",
+            "GOOGLE_CLOUD_SDK_VERSION": "446.0.0"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "hashicorp.terraform",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "googlecloudtools.cloudcode",
+                "redhat.vscode-yaml",
+                "github.copilot"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "editor.formatOnSave": true,
+                "files.trimTrailingWhitespace": true
+            }
+        }
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/.config/gcloud,target=/home/vscode/.config/gcloud,type=bind,consistency=cached"
+    ],
+    "remoteEnv": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "/home/vscode/.config/gcloud/application_default_credentials.json",
+        "PROJECT_ROOT": "${containerWorkspaceFolder}"
+    },
+    // "postCreateCommand": "bash .devcontainer/post-create.sh"
+}
