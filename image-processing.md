@@ -121,6 +121,9 @@ cd code
 docker build -t gcr.io/${PROJECT_ID}/bg-remove:latest bg-remove/
 docker push gcr.io/${PROJECT_ID}/bg-remove:latest
 
+#auth to the registry gcr
+gcloud auth configure-docker gcr.io
+
 # Build and push frontend
 docker build -t gcr.io/${PROJECT_ID}/frontend:latest frontend/
 docker push gcr.io/${PROJECT_ID}/frontend:latest
