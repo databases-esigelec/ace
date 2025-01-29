@@ -147,7 +147,7 @@ resource "google_cloud_run_service" "image_processor" {
 data "archive_file" "function_source" {
   type        = "zip"
   output_path = "${path.module}/function-source.zip"
-  source_dir  = "${path.module}/metadata_processor"
+  source_dir  = "${dirname(path.cwd)}/metadata_processor"
 }
 
 
