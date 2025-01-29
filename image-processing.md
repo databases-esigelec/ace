@@ -42,6 +42,18 @@ A complete Google Cloud Platform setup for an image processing service that remo
    echo "PATH=$PATH:~/gcloud/google-cloud-sdk/bin" >> ~/.bashrc
    ```
    > Open a new terminal and you'll be ready to start.
+
+**Create a service account key**
+- Identify your default sevice account:
+
+![alt text](image.png)
+
+- Open it and create a JSON key
+![alt text](image-1.png)
+
+- Copy this key and paste the content in a file that you'll store at code/infra/credentials.json
+
+
 2. Set up Google Cloud authentication:
 ```bash
 # Use existing credentials
